@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Ramais Rumos</title>
+    <link rel="icon" href="favicon.ico">
+    <style>
+        :root {
+            --bg: #f7f7f7;
+            --surface: #ffffff;
+            --surface-strong: #f0f2f5;
+            --text: #17212b;
+            --muted: #5f6d81;
+            --orange: #ff6b3d;
+            --green: #118a47;
+            --border: rgba(23, 33, 43, 0.12);
+            --shadow: 0 18px 50px rgba(23, 33, 43, 0.12);
+            --radius: 26px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: var(--text);
+            background: linear-gradient(180deg, #f8fafc 0%, #eef2f6 100%);
+            min-height: 100vh;
+        }
+
+        .page {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 32px 24px 48px;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+            padding: 24px 28px;
+            background: rgba(255, 107, 61, 0.12);
+            border: 1px solid rgba(255, 107, 61, 0.24);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .brand-title {
+            margin: 0;
+            font-size: clamp(2rem, 2.5vw, 2.8rem);
+            line-height: 1.05;
+            color: var(--orange);
+            font-weight: 800;
+        }
+
+        .brand-subtitle {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: 1rem;
+        }
+
+        .hero-info {
+            max-width: 680px;
+        }
+
+        .hero-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 16px;
+            color: #0d6938;
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .hero-meta::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        .search-card {
+            margin: 0 auto 30px;
+            max-width: 860px;
+            padding: 22px 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .search-card label {
+            display: block;
+            font-size: 0.95rem;
+            color: var(--muted);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .search-card input {
+            width: 100%;
+            border: 1px solid rgba(23, 33, 43, 0.12);
+            border-radius: 18px;
+            padding: 16px 18px;
+            font-size: 1rem;
+            color: var(--text);
+            outline: none;
+            background: #f8fafc;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .search-card input:focus {
+            border-color: var(--orange);
+            box-shadow: 0 0 0 5px rgba(255, 107, 61, 0.18);
+            transform: translateY(-1px);
+            background: #fff9f4;
+        }
+
+        .section {
+            margin-bottom: 26px;
+        }
+
+        .section-title {
+            margin: 0 0 16px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--orange);
+            font-weight: 700;
+        }
+
+        .section-counter {
+            display: none;
+        }
+
+        .section-description {
+            margin: 0 0 18px;
+            color: var(--muted);
+            font-size: 0.98rem;
+        }
+
+        .card-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 720px;
+        }
+
+        thead tr {
+            background: #fff9f6;
+            border-bottom: 2px solid var(--orange);
+        }
+
+        th, td {
+            padding: 16px 18px;
+            text-align: left;
+            border-bottom: 1px solid rgba(23, 33, 43, 0.08);
+            font-size: 0.95rem;
+        }
+
+        th {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        tbody tr {
+            background: #ffffff;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(17, 138, 71, 0.10);
+            transform: translateY(-1px);
+            box-shadow: 0 12px 30px rgba(17, 138, 71, 0.12);
+        }
+
+        .pill-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
+        }
+
+        .pill-button.primary {
+            background: linear-gradient(135deg, #ff6b3d 0%, #ff8855 100%);
+            color: #fff;
+            box-shadow: 0 12px 32px rgba(255, 107, 61, 0.32);
+            border: 1px solid rgba(255, 107, 61, 0.4);
+        }
+
+        .pill-button.primary:hover:not(:disabled) {
+            box-shadow: 0 18px 48px rgba(255, 107, 61, 0.42);
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #ff7a52 0%, #ff9966 100%);
+        }
+
+        .pill-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .command-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .command-card {
+            padding: 24px;
+            border-radius: 24px;
+            border: 1px solid rgba(23, 33, 43, 0.08);
+            background: #ffffff;
+            box-shadow: 0 22px 52px rgba(23, 33, 43, 0.08);
+            transition: transform 0.25s ease, border-color 0.25s ease;
+            cursor: pointer;
+        }
+
+        .command-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 107, 61, 0.30);
+        }
+
+        .command-name {
+            margin: 0 0 12px;
+            font-size: 1.05rem;
+            letter-spacing: 0.01em;
+            color: var(--orange);
+            font-weight: 700;
+        }
+
+        .command-description {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.6;
+            font-size: 0.92rem;
+        }
+
+        .command-tag {
+            display: inline-flex;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(255, 107, 61, 0.18);
+            color: var(--orange);
+            font-size: 0.82rem;
+            font-weight: 800;
+            margin-top: 18px;
+        }
+
+        .toast {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            background: #17212b;
+            color: #fff;
+            padding: 14px 18px;
+            border-radius: 18px;
+            box-shadow: 0 18px 40px rgba(23, 33, 43, 0.22);
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            font-size: 0.95rem;
+            min-width: 220px;
+        }
+
+        .toast.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 980px) {
+            .command-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 720px) {
+            .page {
+                padding: 20px 16px 32px;
+            }
+
+            .brand-header,
+            .search-card,
+            .card-panel {
+                padding: 20px;
+                border-radius: 22px;
+            }
+
+            .command-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                min-width: 100%;
+            }
+
+            th, td {
+                padding: 14px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <section class="brand-header">
+            <div class="hero-info">
+                <h1 class="brand-title">Central de Ramais Rumos</h1>
+                <p class="brand-subtitle">Consulta rápida de ramais e comandos internos</p>
+                <p class="hero-meta">Acesso direto, sem backend, com visual clean e navegação rápida.</p>
+            </div>
+        </section>
+
+        <section class="search-card">
+            <label for="search">Pesquisa global</label>
+            <input id="search" type="search" placeholder="Buscar por nome, setor/local ou ramal..." autocomplete="off">
+        </section>
+
+        <section class="section" id="escritorio-section">
+            <div class="section-title">ESCRITÓRIO</div>
+            <p class="section-description">Ramais do escritório.</p>
+            <div class="card-panel">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Setor/Local</th>
+                                <th>Ramal</th>
+                                <th>Copiar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="escritorio-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="bases-section">
+            <div class="section-title">BASES</div>
+            <p class="section-description">Bases operacionais.</p>
+            <div class="card-panel">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Local</th>
+                                <th>Nome</th>
+                                <th>Ramal</th>
+                                <th>Copiar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bases-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="treslogistica-section">
+            <div class="section-title">3R LOGÍSTICA</div>
+            <p class="section-description">Ramais e contatos da 3R Logística.</p>
+            <div class="card-panel">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Setor/Local</th>
+                                <th>Ramal</th>
+                                <th>Copiar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="treslogistica-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="comandos-section">
+            <div class="section-title">COMANDOS</div>
+            <p class="section-description">Ações internas disponíveis.</p>
+            <div class="command-grid" id="comandos-grid"></div>
+        </section>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const escritorioData = [
+            { nome: 'ALAMON/GILMAR', setor: 'CONTROLADORIA/DIRETORIA', ramal: '2202' },
+            { nome: 'ALESSANDRA', setor: 'COMERCIAL', ramal: '2214' },
+            { nome: 'ANA MARAN/GABRIEL BERARDO', setor: 'CONTÁBIL/JURÍDICO', ramal: '2279' },
+            { nome: 'JESSE', setor: 'RH', ramal: '2210' },
+            { nome: 'CÁSSIO', setor: 'FINANCEIRO', ramal: '2208' },
+            { nome: 'DIEGO', setor: 'COMERCIAL', ramal: '2227' },
+            { nome: 'DOMICIANO/NORBERTO', setor: 'JURÍDICO', ramal: '2203' },
+            { nome: 'ERIKA', setor: 'COMERCIAL', ramal: '2215' },
+            { nome: 'FAUSTO', setor: 'DIRETORIA', ramal: '2201' },
+            { nome: 'GABRIEL', setor: 'CONTROLADORIA', ramal: '2205' },
+            { nome: 'JOÃO GERMANO', setor: 'SUPRIMENTOS', ramal: '2206' },
+            { nome: 'JOICE', setor: 'FINANCEIRO', ramal: '2211' },
+            { nome: 'JOSIANE', setor: 'COMPRAS', ramal: '2209' },
+            { nome: 'KELI', setor: 'FINANCEIRO', ramal: '2207' },
+            { nome: 'LAURA', setor: 'SUPRIMENTOS', ramal: '2225' },
+            { nome: 'MIQUELIM', setor: 'TI', ramal: '2218' },
+            { nome: 'ALEXANDRE', setor: 'SUPRIMENTOS', ramal: '2274' },
+            { nome: 'MURILO', setor: 'TI', ramal: '2226' },
+            { nome: 'PRISCILA', setor: 'CONTÁBIL', ramal: '2212' },
+            { nome: 'SALA REUNIÃO BRONZE', setor: '', ramal: '2222' },
+            { nome: 'SALA REUNIÃO OURO', setor: '', ramal: '2220' },
+            { nome: 'SALA REUNIÃO PRATA', setor: '', ramal: '2221' },
+            { nome: 'SARA', setor: 'FINANCEIRO', ramal: '2314' },
+            { nome: 'SÉRGIO', setor: 'LOGÍSTICA COMERCIAL', ramal: '2311' }
+        ];
+
+        const basesData = [
+            { local: 'BAURU', nome: 'ARIANE', ramal: '2303' },
+            { local: 'GOIAS', nome: 'ANA CLAUDIA', ramal: '2304' },
+            { local: 'GUARULHOS', nome: 'JULIANA', ramal: '2302' },
+            { local: 'GUARULHOS', nome: 'FABIANA', ramal: '2305' },
+            { local: 'PAULINIA', nome: 'IVAN', ramal: '2301' },
+            { local: 'PAULINIA', nome: 'PAULO', ramal: '2306' },
+            { local: 'RPRETO', nome: 'BASE', ramal: '2309' },
+            { local: 'RPRETO', nome: 'GIL', ramal: '2307' },
+            { local: 'RPRETO', nome: 'RAFAEL', ramal: '2308' },
+            { local: 'UBERLÂNDIA', nome: 'SAMUEL', ramal: '2228' },
+            { local: 'PARQUE DOS LAGOS', nome: 'DAVI', ramal: '2480' }
+        ];
+
+        const tresLogisticaData = [
+            { nome: 'JESSE/MAILLY', setor: '', ramal: '3290' },
+            { nome: 'MATHEUS/THAIS', setor: '', ramal: '2277' },
+            { nome: 'OSVALDO NETO', setor: '', ramal: '3291' },
+            { nome: 'PORTARIA', setor: '', ramal: '2213' },
+            { nome: 'RONALDO', setor: 'MANUTENÇÃO', ramal: '3292' },
+            { nome: 'TALITA', setor: '', ramal: '2224' },
+            { nome: 'THAMIRES/CECÍLIA', setor: '', ramal: '2216' }
+        ];
+
+        const comandosData = [
+            { nome: 'LIGAÇÕES', descricao: 'Use *2+ RAMAL # para realizar ligações entre ramais' },
+            { nome: 'PUXAR', descricao: 'Use *8# para puxar ligação de volta para seu ramal' },
+            { nome: 'PUXAR LIGAÇÃO DE VOLTA', descricao: 'Use *2+ RAMAL # para recuperar ligação em espera' },
+            { nome: 'TRANSFERIR', descricao: 'Use *2+ RAMAL # para transferir ligações' }
+        ];
+
+        const searchInput = document.getElementById('search');
+        const escritorioBody = document.getElementById('escritorio-body');
+        const basesBody = document.getElementById('bases-body');
+        const tresLogisticaBody = document.getElementById('treslogistica-body');
+        const comandosGrid = document.getElementById('comandos-grid');
+        const toast = document.getElementById('toast');
+
+        function getSearchQuery() {
+            return searchInput.value.trim().toLowerCase();
+        }
+
+        function matchesOffice(item, query) {
+            if (!query) return true;
+            return [item.nome, item.setor, item.ramal]
+                .filter(Boolean)
+                .some(value => value.toLowerCase().includes(query));
+        }
+
+        function matchesBases(item, query) {
+            if (!query) return true;
+            return [item.local, item.nome, item.ramal]
+                .filter(Boolean)
+                .some(value => value.toLowerCase().includes(query));
+        }
+
+        function matchesCommand(item, query) {
+            if (!query) return true;
+            return [item.nome, item.descricao]
+                .filter(Boolean)
+                .some(value => value.toLowerCase().includes(query));
+        }
+
+        function renderOfficeRow(item) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.nome || '—'}</td>
+                <td>${item.setor || '—'}</td>
+                <td>${item.ramal || '—'}</td>
+                <td>
+                    <button class="pill-button primary" type="button" onclick="copyValue('${item.ramal || ''}', 'Ramal')" ${!item.ramal ? 'disabled' : ''}>Copiar ramal</button>
+                </td>
+            `;
+            return row;
+        }
+
+        function renderBasesRow(item) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.local || '—'}</td>
+                <td>${item.nome || '—'}</td>
+                <td>${item.ramal || '—'}</td>
+                <td>
+                    <button class="pill-button primary" type="button" onclick="copyValue('${item.ramal || ''}', 'Ramal')" ${!item.ramal ? 'disabled' : ''}>Copiar ramal</button>
+                </td>
+            `;
+            return row;
+        }
+
+        function renderCommandCard(item) {
+            const card = document.createElement('article');
+            card.className = 'command-card';
+            card.innerHTML = `
+                <h3 class="command-name">${item.nome}</h3>
+                <p class="command-description">${item.descricao}</p>
+                <div class="command-tag">Ação Interna</div>
+            `;
+            return card;
+        }
+
+        function renderSections() {
+            const query = getSearchQuery();
+
+            const filteredEscritorio = escritorioData.filter(item => matchesOffice(item, query));
+            const filteredBases = basesData.filter(item => matchesBases(item, query));
+            const filteredTresLogistica = tresLogisticaData.filter(item => matchesOffice(item, query));
+            const filteredComandos = comandosData.filter(item => matchesCommand(item, query));
+
+            escritorioBody.innerHTML = '';
+            basesBody.innerHTML = '';
+            tresLogisticaBody.innerHTML = '';
+            comandosGrid.innerHTML = '';
+
+            if (filteredEscritorio.length === 0) {
+                escritorioBody.innerHTML = '<tr><td colspan="4">Nenhum resultado encontrado.</td></tr>';
+            } else {
+                filteredEscritorio.forEach(item => escritorioBody.appendChild(renderOfficeRow(item)));
+            }
+
+            if (filteredBases.length === 0) {
+                basesBody.innerHTML = '<tr><td colspan="4">Nenhum resultado encontrado.</td></tr>';
+            } else {
+                filteredBases.forEach(item => basesBody.appendChild(renderBasesRow(item)));
+            }
+
+            if (filteredTresLogistica.length === 0) {
+                tresLogisticaBody.innerHTML = '<tr><td colspan="4">Nenhum resultado encontrado.</td></tr>';
+            } else {
+                filteredTresLogistica.forEach(item => tresLogisticaBody.appendChild(renderOfficeRow(item)));
+            }
+
+            if (filteredComandos.length === 0) {
+                comandosGrid.innerHTML = '<div style="grid-column: 1 / -1; padding: 24px; color: var(--muted);">Nenhum comando encontrado.</div>';
+            } else {
+                filteredComandos.forEach(item => comandosGrid.appendChild(renderCommandCard(item)));
+            }
+        }
+
+        function copyValue(value, label) {
+            const text = value || '';
+            if (!text) {
+                showToast(`${label} não disponível para copiar.`);
+                return;
+            }
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(`${label} copiado: ${text}`);
+            }).catch(() => {
+                showToast('Falha ao copiar. Tente novamente.');
+            });
+        }
+
+        let toastTimeout;
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('visible');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => toast.classList.remove('visible'), 2400);
+        }
+
+        searchInput.addEventListener('input', renderSections);
+        renderSections();
+
+        window.copyValue = copyValue;
+    </script>
+</body>
+</html>
