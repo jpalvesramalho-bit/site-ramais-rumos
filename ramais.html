@@ -90,10 +90,12 @@
         }
 
         .sidebar-brand img {
-            width: 100%;
-            height: 100%;
+            width: 86%;
+            height: 86%;
             object-fit: contain;
+            object-position: center;
             display: block;
+            margin: auto;
         }
 
         .sidebar-nav {
@@ -128,6 +130,7 @@
         }
 
         .app-shell:has(#bases-section:target) .nav-item.active,
+        .app-shell:has(#auto-posto-section:target) .nav-item.active,
         .app-shell:has(#treslogistica-section:target) .nav-item.active,
         .app-shell:has(#comandos-section:target) .nav-item.active {
             background: transparent;
@@ -135,6 +138,7 @@
         }
 
         .app-shell:has(#bases-section:target) .nav-item[href="#bases-section"],
+        .app-shell:has(#auto-posto-section:target) .nav-item[href="#auto-posto-section"],
         .app-shell:has(#treslogistica-section:target) .nav-item[href="#treslogistica-section"],
         .app-shell:has(#comandos-section:target) .nav-item[href="#comandos-section"] {
             background: var(--green);
@@ -183,7 +187,7 @@
         .brand-header::after {
             content: "";
             position: absolute;
-            right: clamp(24px, 6vw, 76px);
+            right: clamp(20px, 2.8vw, 42px);
             top: 50%;
             width: clamp(128px, 16vw, 230px);
             height: clamp(128px, 16vw, 230px);
@@ -202,12 +206,13 @@
         .brand-title {
             position: relative;
             margin: 0;
-            max-width: 760px;
-            font-size: clamp(2.8rem, 7vw, 6.4rem);
-            line-height: 0.88;
+            max-width: none;
+            font-size: clamp(2.4rem, 4.75vw, 5.15rem);
+            line-height: 0.96;
             color: var(--white);
             font-weight: 1000;
             letter-spacing: 0;
+            white-space: nowrap;
             z-index: 1;
         }
 
@@ -221,32 +226,8 @@
         }
 
         .hero-info {
-            max-width: 860px;
+            max-width: calc(100% - clamp(180px, 22vw, 320px));
             min-width: 0;
-        }
-
-        .hero-meta {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 22px;
-            padding: 12px 18px;
-            border: 1px solid var(--line);
-            border-radius: 999px;
-            color: var(--green);
-            background: var(--black);
-            font-size: 0.95rem;
-            font-weight: 950;
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-meta::before {
-            content: '';
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--green);
         }
 
         .search-card {
@@ -342,15 +323,17 @@
             width: 100%;
             max-width: 100%;
             min-width: 0;
-            overflow-x: auto;
+            overflow: hidden;
             border-radius: inherit;
         }
 
         table {
             width: 100%;
+            max-width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            min-width: 720px;
+            table-layout: fixed;
+            min-width: 0;
         }
 
         thead tr {
@@ -362,6 +345,7 @@
             text-align: left;
             border-bottom: 1px solid rgba(53, 255, 101, 0.18);
             font-size: 0.95rem;
+            overflow-wrap: anywhere;
         }
 
         th {
@@ -396,6 +380,26 @@
             font-weight: 1000;
         }
 
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 34%;
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 34%;
+        }
+
+        th:nth-child(3),
+        td:nth-child(3) {
+            width: 14%;
+        }
+
+        th:nth-child(4),
+        td:nth-child(4) {
+            width: 18%;
+        }
+
         .pill-button {
             display: inline-flex;
             align-items: center;
@@ -409,6 +413,7 @@
             font-size: 0.92rem;
             font-weight: 1000;
             letter-spacing: 0;
+            white-space: nowrap;
             transition: transform var(--speed) ease, opacity var(--speed) ease, background-color var(--speed) ease;
         }
 
@@ -540,7 +545,7 @@
             }
 
             .sidebar-nav {
-                grid-template-columns: repeat(4, minmax(0, 1fr));
+                grid-template-columns: repeat(5, minmax(0, 1fr));
                 width: 100%;
                 gap: 6px;
                 overflow: visible;
@@ -567,6 +572,10 @@
             .brand-header::after {
                 display: none;
             }
+
+            .hero-info {
+                max-width: 100%;
+            }
         }
 
         @media (max-width: 720px) {
@@ -583,6 +592,7 @@
 
             .brand-title {
                 font-size: clamp(2.55rem, 14vw, 4.4rem);
+                white-space: normal;
                 overflow-wrap: break-word;
             }
 
@@ -591,23 +601,94 @@
                 overflow-wrap: break-word;
             }
 
-            .hero-meta {
-                width: 100%;
-                align-items: flex-start;
-                border-radius: 24px;
-                overflow-wrap: anywhere;
-            }
-
             .command-grid {
                 grid-template-columns: 1fr;
             }
 
-            table {
-                min-width: 680px;
+            table,
+            thead,
+            tbody,
+            tr,
+            td {
+                display: block;
+                width: 100%;
             }
 
-            th, td {
-                padding: 14px 12px;
+            thead {
+                display: none;
+            }
+
+            tbody {
+                display: grid;
+                gap: 12px;
+                padding: 12px;
+            }
+
+            tbody tr {
+                border: 1px solid rgba(53, 255, 101, 0.26);
+                border-radius: 24px;
+                padding: 16px;
+            }
+
+            tbody tr:hover {
+                transform: translateY(-2px) scale(1.01);
+            }
+
+            table {
+                min-width: 0;
+            }
+
+            td {
+                overflow-wrap: break-word;
+                border-bottom: 0;
+                padding: 0;
+            }
+
+            td:nth-child(1),
+            td:nth-child(2),
+            td:nth-child(3),
+            td:nth-child(4) {
+                width: 100%;
+            }
+
+            td + td {
+                margin-top: 10px;
+            }
+
+            td::before {
+                display: block;
+                margin-bottom: 4px;
+                color: var(--green);
+                font-size: 0.72rem;
+                font-weight: 1000;
+                text-transform: uppercase;
+            }
+
+            td:nth-child(1)::before {
+                content: "Nome";
+            }
+
+            td:nth-child(2)::before {
+                content: "Setor/Local";
+            }
+
+            td:nth-child(3)::before {
+                content: "Ramal";
+            }
+
+            td:nth-child(4)::before {
+                content: "";
+                display: none;
+            }
+
+            #bases-section td:nth-child(1)::before,
+            #auto-posto-section td:nth-child(1)::before {
+                content: "Local";
+            }
+
+            #bases-section td:nth-child(2)::before,
+            #auto-posto-section td:nth-child(2)::before {
+                content: "Nome";
             }
 
             .pill-button {
@@ -647,10 +728,6 @@
             .brand-subtitle {
                 max-width: 28ch;
             }
-
-            .hero-meta {
-                font-size: 0.9rem;
-            }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -683,6 +760,12 @@
                     </span>
                     <span>Bases</span>
                 </a>
+                <a class="nav-item" href="#auto-posto-section">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M4 20V6a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v14"/><path d="M3 20h14"/><path d="M8 7h4"/><path d="M16 7h1.5L20 9.5V17a2 2 0 0 1-4 0v-4h4"/><path d="M7 12h6"/></svg>
+                    </span>
+                    <span>Auto Posto</span>
+                </a>
                 <a class="nav-item" href="#treslogistica-section">
                     <span class="nav-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
@@ -703,7 +786,6 @@
             <div class="hero-info">
                 <h1 class="brand-title">Central de Ramais Rumos</h1>
                 <p class="brand-subtitle">Consulta rápida de ramais e comandos internos</p>
-                <p class="hero-meta">Acesso direto, sem backend, com visual clean e navegação rápida.</p>
             </div>
         </section>
 
@@ -747,6 +829,26 @@
                             </tr>
                         </thead>
                         <tbody id="bases-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="auto-posto-section">
+            <div class="section-title">AUTO POSTO</div>
+            <p class="section-description">Ramais do Auto Posto.</p>
+            <div class="card-panel">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Local</th>
+                                <th>Nome</th>
+                                <th>Ramal</th>
+                                <th>Copiar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="postos-body"></tbody>
                     </table>
                 </div>
             </div>
@@ -821,6 +923,9 @@
             { local: 'RPRETO', nome: 'GIL', ramal: '2307' },
             { local: 'RPRETO', nome: 'RAFAEL', ramal: '2308' },
             { local: 'UBERLÂNDIA', nome: 'SAMUEL', ramal: '2228' },
+        ];
+
+        const postosData = [
             { local: 'PARQUE DOS LAGOS', nome: 'DAVI', ramal: '2480' }
         ];
 
@@ -844,6 +949,7 @@
         const searchInput = document.getElementById('search');
         const escritorioBody = document.getElementById('escritorio-body');
         const basesBody = document.getElementById('bases-body');
+        const postosBody = document.getElementById('postos-body');
         const tresLogisticaBody = document.getElementById('treslogistica-body');
         const comandosGrid = document.getElementById('comandos-grid');
         const toast = document.getElementById('toast');
@@ -915,11 +1021,13 @@
 
             const filteredEscritorio = escritorioData.filter(item => matchesOffice(item, query));
             const filteredBases = basesData.filter(item => matchesBases(item, query));
+            const filteredPostos = postosData.filter(item => matchesBases(item, query));
             const filteredTresLogistica = tresLogisticaData.filter(item => matchesOffice(item, query));
             const filteredComandos = comandosData.filter(item => matchesCommand(item, query));
 
             escritorioBody.innerHTML = '';
             basesBody.innerHTML = '';
+            postosBody.innerHTML = '';
             tresLogisticaBody.innerHTML = '';
             comandosGrid.innerHTML = '';
 
@@ -933,6 +1041,12 @@
                 basesBody.innerHTML = '<tr><td colspan="4">Nenhum resultado encontrado.</td></tr>';
             } else {
                 filteredBases.forEach(item => basesBody.appendChild(renderBasesRow(item)));
+            }
+
+            if (filteredPostos.length === 0) {
+                postosBody.innerHTML = '<tr><td colspan="4">Nenhum resultado encontrado.</td></tr>';
+            } else {
+                filteredPostos.forEach(item => postosBody.appendChild(renderBasesRow(item)));
             }
 
             if (filteredTresLogistica.length === 0) {
