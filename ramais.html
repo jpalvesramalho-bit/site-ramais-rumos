@@ -7,135 +7,315 @@
     <link rel="icon" href="favicon.ico">
     <style>
         :root {
-            --bg: #f7f7f7;
-            --surface: #ffffff;
-            --surface-strong: #f0f2f5;
-            --text: #17212b;
-            --muted: #5f6d81;
-            --orange: #ff6b3d;
-            --green: #118a47;
-            --border: rgba(23, 33, 43, 0.12);
-            --shadow: 0 18px 50px rgba(23, 33, 43, 0.12);
-            --radius: 26px;
+            --black: #030403;
+            --panel: #0a0d0a;
+            --panel-lift: #101510;
+            --green: #35ff65;
+            --white: #ffffff;
+            --line: rgba(53, 255, 101, 0.42);
+            --line-strong: rgba(53, 255, 101, 0.76);
+            --white-soft: rgba(255, 255, 255, 0.76);
+            --white-dim: rgba(255, 255, 255, 0.54);
+            --muted: var(--white-soft);
+            --radius-xl: 34px;
+            --radius-lg: 28px;
+            --speed: 180ms;
         }
 
         * {
             box-sizing: border-box;
         }
 
+        html {
+            font-size: 87.5%;
+            scroll-behavior: smooth;
+        }
+
         body {
             margin: 0;
-            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            color: var(--text);
-            background: linear-gradient(180deg, #f8fafc 0%, #eef2f6 100%);
+            font-family: Inter, ui-rounded, "Nunito Sans", "Aptos Rounded", "Segoe UI", system-ui, sans-serif;
+            color: var(--white);
+            background: var(--black);
             min-height: 100vh;
+            overflow-x: hidden;
+            text-rendering: geometricPrecision;
+        }
+
+        body::selection {
+            color: var(--black);
+            background: var(--green);
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        .app-shell {
+            display: grid;
+            grid-template-columns: 112px minmax(0, 1fr);
+            gap: 28px;
+            width: min(1440px, 100%);
+            margin: 0 auto;
+            padding: 26px;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 26px;
+            align-self: start;
+            min-height: calc(100vh - 52px);
+            padding: 16px 12px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-xl);
+            background: var(--panel);
+        }
+
+        .sidebar-brand {
+            display: grid;
+            place-items: center;
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 18px;
+            border-radius: 0;
+            background: transparent;
+            border: 0;
+            text-decoration: none;
+            overflow: hidden;
+            transition: transform var(--speed) ease;
+        }
+
+        .sidebar-brand:hover {
+            transform: translateY(-2px) scale(1.04);
+        }
+
+        .sidebar-brand img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .sidebar-nav {
+            display: grid;
+            gap: 10px;
+        }
+
+        .nav-item {
+            display: grid;
+            place-items: center;
+            gap: 7px;
+            min-height: 76px;
+            padding: 9px 6px;
+            border: 1px solid transparent;
+            border-radius: 24px;
+            color: var(--white);
+            text-align: center;
+            text-decoration: none;
+            transition: transform var(--speed) ease, background-color var(--speed) ease, color var(--speed) ease, border-color var(--speed) ease;
+        }
+
+        .nav-item:hover,
+        .nav-item:focus-visible {
+            transform: translateY(-2px) scale(1.03);
+            border-color: var(--line-strong);
+            outline: none;
+        }
+
+        .nav-item.active {
+            background: var(--green);
+            color: var(--black);
+        }
+
+        .app-shell:has(#bases-section:target) .nav-item.active,
+        .app-shell:has(#treslogistica-section:target) .nav-item.active,
+        .app-shell:has(#comandos-section:target) .nav-item.active {
+            background: transparent;
+            color: var(--white);
+        }
+
+        .app-shell:has(#bases-section:target) .nav-item[href="#bases-section"],
+        .app-shell:has(#treslogistica-section:target) .nav-item[href="#treslogistica-section"],
+        .app-shell:has(#comandos-section:target) .nav-item[href="#comandos-section"] {
+            background: var(--green);
+            color: var(--black);
+        }
+
+        .nav-item svg {
+            width: 31px;
+            height: 31px;
+            stroke: currentColor;
+            stroke-width: 2.4;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .nav-item span:last-child {
+            max-width: 86px;
+            font-size: 0.72rem;
+            font-weight: 950;
+            line-height: 1;
+            letter-spacing: 0;
         }
 
         .page {
-            max-width: 1180px;
-            margin: 0 auto;
-            padding: 32px 24px 48px;
+            min-width: 0;
+            padding: 0 0 42px;
         }
 
         .brand-header {
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 18px;
+            gap: 24px;
             flex-wrap: wrap;
-            margin-bottom: 28px;
-            padding: 24px 28px;
-            background: rgba(255, 107, 61, 0.12);
-            border: 1px solid rgba(255, 107, 61, 0.24);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
+            min-height: 238px;
+            margin-bottom: 24px;
+            padding: clamp(28px, 4vw, 54px);
+            overflow: hidden;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-xl);
+        }
+
+        .brand-header::after {
+            content: "";
+            position: absolute;
+            right: clamp(24px, 6vw, 76px);
+            top: 50%;
+            width: clamp(128px, 16vw, 230px);
+            height: clamp(128px, 16vw, 230px);
+            background-image: url("favicon.ico");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .brand-header::before {
+            display: none;
         }
 
         .brand-title {
+            position: relative;
             margin: 0;
-            font-size: clamp(2rem, 2.5vw, 2.8rem);
-            line-height: 1.05;
-            color: var(--orange);
-            font-weight: 800;
+            max-width: 760px;
+            font-size: clamp(2.8rem, 7vw, 6.4rem);
+            line-height: 0.88;
+            color: var(--white);
+            font-weight: 1000;
+            letter-spacing: 0;
+            z-index: 1;
         }
 
         .brand-subtitle {
-            margin: 8px 0 0;
-            color: var(--muted);
-            font-size: 1rem;
+            position: relative;
+            margin: 22px 0 0;
+            color: var(--white-soft);
+            font-size: clamp(1.02rem, 1.5vw, 1.22rem);
+            font-weight: 800;
+            z-index: 1;
         }
 
         .hero-info {
-            max-width: 680px;
+            max-width: 860px;
+            min-width: 0;
         }
 
         .hero-meta {
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            margin-top: 16px;
-            color: #0d6938;
+            margin-top: 22px;
+            padding: 12px 18px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            color: var(--green);
+            background: var(--black);
             font-size: 0.95rem;
-            font-weight: 700;
+            font-weight: 950;
+            position: relative;
+            z-index: 1;
         }
 
         .hero-meta::before {
             content: '';
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: var(--green);
         }
 
         .search-card {
-            margin: 0 auto 30px;
-            max-width: 860px;
-            padding: 22px 24px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            box-shadow: var(--shadow);
+            margin: 0 0 30px;
+            padding: 18px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-xl);
         }
 
         .search-card label {
             display: block;
-            font-size: 0.95rem;
-            color: var(--muted);
-            margin-bottom: 10px;
-            font-weight: 600;
+            font-size: 0.82rem;
+            color: var(--green);
+            margin: 0 0 10px 8px;
+            font-weight: 1000;
+            text-transform: uppercase;
+            letter-spacing: 0;
         }
 
         .search-card input {
             width: 100%;
-            border: 1px solid rgba(23, 33, 43, 0.12);
-            border-radius: 18px;
-            padding: 16px 18px;
-            font-size: 1rem;
-            color: var(--text);
+            border: 2px solid var(--line);
+            border-radius: 999px;
+            padding: 20px 24px;
+            font-size: clamp(1rem, 1.6vw, 1.18rem);
+            color: var(--white);
             outline: none;
-            background: #f8fafc;
-            transition: border-color 0.2s ease, transform 0.2s ease;
+            background: var(--black);
+            caret-color: var(--green);
+            font-weight: 850;
+            transition: border-color var(--speed) ease, transform var(--speed) ease, background-color var(--speed) ease;
+        }
+
+        .search-card input::placeholder {
+            color: var(--white-dim);
+            font-weight: 750;
         }
 
         .search-card input:focus {
-            border-color: var(--orange);
-            box-shadow: 0 0 0 5px rgba(255, 107, 61, 0.18);
-            transform: translateY(-1px);
-            background: #fff9f4;
+            border-color: var(--green);
+            transform: scale(1.01);
+            background: var(--panel-lift);
         }
 
         .section {
-            margin-bottom: 26px;
+            margin-bottom: 32px;
+            min-width: 0;
+            scroll-margin-top: 28px;
         }
 
         .section-title {
-            margin: 0 0 16px;
-            font-size: 1.2rem;
+            margin: 0 0 10px;
+            font-size: clamp(1.45rem, 2.5vw, 2.35rem);
             display: flex;
             align-items: center;
-            gap: 10px;
-            color: var(--orange);
-            font-weight: 700;
+            gap: 12px;
+            color: var(--white);
+            font-weight: 1000;
+            letter-spacing: 0;
+        }
+
+        .section-title::before {
+            content: "";
+            width: 18px;
+            height: 18px;
+            border-radius: 7px;
+            background: var(--green);
+            flex: 0 0 auto;
         }
 
         .section-counter {
@@ -143,56 +323,77 @@
         }
 
         .section-description {
-            margin: 0 0 18px;
-            color: var(--muted);
-            font-size: 0.98rem;
+            margin: 0 0 18px 30px;
+            color: var(--white-soft);
+            font-size: 1rem;
+            font-weight: 750;
         }
 
         .card-panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 28px;
-            box-shadow: var(--shadow);
+            max-width: 100%;
+            min-width: 0;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-xl);
             overflow: hidden;
         }
 
         .table-wrapper {
             width: 100%;
+            max-width: 100%;
+            min-width: 0;
             overflow-x: auto;
+            border-radius: inherit;
         }
 
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             min-width: 720px;
         }
 
         thead tr {
-            background: #fff9f6;
-            border-bottom: 2px solid var(--orange);
+            background: var(--green);
         }
 
         th, td {
-            padding: 16px 18px;
+            padding: 18px 20px;
             text-align: left;
-            border-bottom: 1px solid rgba(23, 33, 43, 0.08);
+            border-bottom: 1px solid rgba(53, 255, 101, 0.18);
             font-size: 0.95rem;
         }
 
         th {
-            color: var(--text);
-            font-weight: 700;
+            color: var(--black);
+            font-weight: 1000;
+            text-transform: uppercase;
+            letter-spacing: 0;
         }
 
         tbody tr {
-            background: #ffffff;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            background: var(--panel);
+            transition: transform var(--speed) ease, background-color var(--speed) ease;
         }
 
         tbody tr:hover {
-            background: rgba(17, 138, 71, 0.10);
-            transform: translateY(-1px);
-            box-shadow: 0 12px 30px rgba(17, 138, 71, 0.12);
+            background: var(--panel-lift);
+            transform: scale(1.006);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        td {
+            color: var(--white);
+            font-weight: 800;
+        }
+
+        td:nth-child(3) {
+            color: var(--green);
+            font-size: 1.05rem;
+            font-weight: 1000;
         }
 
         .pill-button {
@@ -200,77 +401,80 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 10px 16px;
+            min-height: 44px;
+            padding: 12px 20px;
             border-radius: 999px;
             border: none;
             cursor: pointer;
-            font-size: 0.88rem;
-            font-weight: 600;
-            transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
+            font-size: 0.92rem;
+            font-weight: 1000;
+            letter-spacing: 0;
+            transition: transform var(--speed) ease, opacity var(--speed) ease, background-color var(--speed) ease;
         }
 
         .pill-button.primary {
-            background: linear-gradient(135deg, #ff6b3d 0%, #ff8855 100%);
-            color: #fff;
-            box-shadow: 0 12px 32px rgba(255, 107, 61, 0.32);
-            border: 1px solid rgba(255, 107, 61, 0.4);
+            background: var(--green);
+            color: var(--black);
+            border: 1px solid var(--green);
         }
 
         .pill-button.primary:hover:not(:disabled) {
-            box-shadow: 0 18px 48px rgba(255, 107, 61, 0.42);
-            transform: translateY(-2px);
-            background: linear-gradient(135deg, #ff7a52 0%, #ff9966 100%);
+            transform: translateY(-2px) scale(1.05);
+            background: var(--white);
+            border-color: var(--white);
         }
 
         .pill-button:disabled {
-            opacity: 0.5;
+            opacity: 0.42;
             cursor: not-allowed;
         }
 
         .command-grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 18px;
+            gap: 16px;
         }
 
         .command-card {
-            padding: 24px;
-            border-radius: 24px;
-            border: 1px solid rgba(23, 33, 43, 0.08);
-            background: #ffffff;
-            box-shadow: 0 22px 52px rgba(23, 33, 43, 0.08);
-            transition: transform 0.25s ease, border-color 0.25s ease;
+            min-height: 190px;
+            padding: 26px;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--line);
+            background: var(--panel);
+            transition: transform var(--speed) ease, border-color var(--speed) ease, background-color var(--speed) ease;
             cursor: pointer;
         }
 
         .command-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(255, 107, 61, 0.30);
+            transform: translateY(-5px) scale(1.015);
+            border-color: var(--line-strong);
+            background: var(--panel-lift);
         }
 
         .command-name {
             margin: 0 0 12px;
-            font-size: 1.05rem;
-            letter-spacing: 0.01em;
-            color: var(--orange);
-            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 0;
+            color: var(--green);
+            font-weight: 1000;
         }
 
         .command-description {
             margin: 0;
-            color: var(--muted);
-            line-height: 1.6;
-            font-size: 0.92rem;
+            color: var(--white-soft);
+            line-height: 1.55;
+            font-size: 0.96rem;
+            font-weight: 750;
         }
 
         .command-tag {
             display: inline-flex;
-            padding: 6px 12px;
+            padding: 9px 14px;
             border-radius: 999px;
-            background: rgba(255, 107, 61, 0.18);
-            color: var(--orange);
+            background: var(--green);
+            color: var(--black);
             font-size: 0.82rem;
-            font-weight: 800;
+            font-weight: 1000;
             margin-top: 18px;
         }
 
@@ -278,17 +482,19 @@
             position: fixed;
             right: 24px;
             bottom: 24px;
-            background: #17212b;
-            color: #fff;
-            padding: 14px 18px;
-            border-radius: 18px;
-            box-shadow: 0 18px 40px rgba(23, 33, 43, 0.22);
+            background: var(--green);
+            color: var(--black);
+            padding: 16px 20px;
+            border-radius: 999px;
+            border: 1px solid var(--green);
             opacity: 0;
             transform: translateY(20px);
             pointer-events: none;
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            transition: opacity var(--speed) ease, transform var(--speed) ease;
             font-size: 0.95rem;
+            font-weight: 1000;
             min-width: 220px;
+            z-index: 20;
         }
 
         .toast.visible {
@@ -302,16 +508,94 @@
             }
         }
 
-        @media (max-width: 720px) {
-            .page {
-                padding: 20px 16px 32px;
+        @media (max-width: 860px) {
+            .app-shell {
+                display: block;
+                width: 100vw;
+                max-width: 100vw;
+                padding: 16px;
+                overflow: hidden;
             }
 
+            .sidebar {
+                top: 12px;
+                z-index: 10;
+                width: 100%;
+                max-width: 100%;
+                min-height: 0;
+                margin-bottom: 18px;
+                padding: 10px;
+                border-radius: 28px;
+                overflow: hidden;
+            }
+
+            .page {
+                width: 100%;
+                max-width: 100%;
+                overflow: hidden;
+            }
+
+            .sidebar-brand {
+                display: none;
+            }
+
+            .sidebar-nav {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                width: 100%;
+                gap: 6px;
+                overflow: visible;
+            }
+
+            .nav-item {
+                min-width: 0;
+                min-height: 68px;
+                padding: 8px 4px;
+                border-radius: 22px;
+            }
+
+            .nav-item svg {
+                width: 28px;
+                height: 28px;
+            }
+
+            .nav-item span:last-child {
+                max-width: 100%;
+                font-size: 0.66rem;
+            }
+
+            .brand-header::before,
+            .brand-header::after {
+                display: none;
+            }
+        }
+
+        @media (max-width: 720px) {
             .brand-header,
             .search-card,
             .card-panel {
-                padding: 20px;
-                border-radius: 22px;
+                border-radius: 28px;
+            }
+
+            .brand-header {
+                min-height: 0;
+                padding: 30px 24px;
+            }
+
+            .brand-title {
+                font-size: clamp(2.55rem, 14vw, 4.4rem);
+                overflow-wrap: break-word;
+            }
+
+            .brand-subtitle {
+                max-width: 100%;
+                overflow-wrap: break-word;
+            }
+
+            .hero-meta {
+                width: 100%;
+                align-items: flex-start;
+                border-radius: 24px;
+                overflow-wrap: anywhere;
             }
 
             .command-grid {
@@ -319,17 +603,102 @@
             }
 
             table {
-                min-width: 100%;
+                min-width: 680px;
             }
 
             th, td {
                 padding: 14px 12px;
             }
+
+            .pill-button {
+                width: 100%;
+            }
+
+            .toast {
+                left: 16px;
+                right: 16px;
+                bottom: 16px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .brand-subtitle {
+                max-width: 29ch;
+            }
+
+            .search-card input {
+                padding: 18px 20px;
+                font-size: 0.96rem;
+            }
+
+            .nav-item span:last-child {
+                font-size: 0.62rem;
+            }
+        }
+
+        @media (max-width: 540px) {
+            .app-shell {
+                width: min(100vw, 390px);
+                max-width: 390px;
+                margin: 0;
+            }
+
+            .brand-subtitle {
+                max-width: 28ch;
+            }
+
+            .hero-meta {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
 <body>
-    <main class="page">
+    <div class="app-shell">
+        <aside class="sidebar" aria-label="Navegacao principal">
+            <a class="sidebar-brand" href="#top" aria-label="Ir para o topo">
+                <img src="favicon.ico" alt="">
+            </a>
+            <nav class="sidebar-nav">
+                <a class="nav-item active" href="#escritorio-section">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M4 21V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v16"/><path d="M9 21v-5h3v5"/><path d="M8 7h1"/><path d="M12 7h1"/><path d="M8 11h1"/><path d="M12 11h1"/><path d="M3 21h18"/></svg>
+                    </span>
+                    <span>Escritorio</span>
+                </a>
+                <a class="nav-item" href="#bases-section">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M12 21s7-5.2 7-11a7 7 0 0 0-14 0c0 5.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+                    </span>
+                    <span>Bases</span>
+                </a>
+                <a class="nav-item" href="#treslogistica-section">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+                    </span>
+                    <span>3R</span>
+                </a>
+                <a class="nav-item" href="#comandos-section">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="m8 9-4 3 4 3"/><path d="m16 9 4 3-4 3"/><path d="m14 4-4 16"/></svg>
+                    </span>
+                    <span>Comandos</span>
+                </a>
+            </nav>
+        </aside>
+
+    <main class="page" id="top">
         <section class="brand-header">
             <div class="hero-info">
                 <h1 class="brand-title">Central de Ramais Rumos</h1>
@@ -409,6 +778,7 @@
             <div class="command-grid" id="comandos-grid"></div>
         </section>
     </main>
+    </div>
 
     <div class="toast" id="toast"></div>
 
