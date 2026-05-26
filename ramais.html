@@ -507,6 +507,78 @@
             transform: translateY(0);
         }
 
+        .hidden {
+            display: none !important;
+        }
+
+        .login-screen {
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            padding: 24px;
+            background: var(--black);
+        }
+
+        .login-card {
+            width: min(460px, 100%);
+            padding: 32px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            background: var(--panel);
+            box-shadow: 0 18px 80px rgba(0, 0, 0, 0.48);
+        }
+
+        .login-card h2 {
+            margin: 0 0 12px;
+            color: var(--green);
+            font-size: clamp(1.85rem, 5vw, 2.6rem);
+            font-weight: 1000;
+        }
+
+        .login-card p {
+            margin: 0 0 24px;
+            color: var(--white-soft);
+            line-height: 1.55;
+            font-weight: 750;
+        }
+
+        .office-login-button {
+            width: 100%;
+            min-height: 54px;
+            text-decoration: none;
+        }
+
+        .auth-message {
+            margin-top: 16px;
+            color: var(--white-dim);
+            font-size: 0.9rem;
+        }
+
+        .sidebar-actions {
+            margin-top: 12px;
+        }
+
+        .signout-link {
+            display: grid;
+            place-items: center;
+            min-height: 44px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            color: var(--white-soft);
+            text-decoration: none;
+            font-size: 0.78rem;
+            font-weight: 1000;
+            transition: transform var(--speed) ease, border-color var(--speed) ease, color var(--speed) ease;
+        }
+
+        .signout-link:hover,
+        .signout-link:focus-visible {
+            transform: translateY(-2px);
+            border-color: var(--line-strong);
+            color: var(--green);
+            outline: none;
+        }
+
         @media (max-width: 980px) {
             .command-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -742,7 +814,16 @@
     </style>
 </head>
 <body>
-    <div class="app-shell">
+    <div class="login-screen hidden" id="login-screen" aria-label="Login Microsoft 365">
+        <div class="login-card">
+            <h2>Central de Ramais</h2>
+            <p>Entre com sua conta Microsoft 365 para consultar os ramais internos.</p>
+            <a class="pill-button primary office-login-button" id="office-login-button" href="/auth/login">Entrar com Microsoft 365</a>
+            <div class="auth-message" id="auth-message"></div>
+        </div>
+    </div>
+
+    <div class="app-shell hidden" id="app-shell">
         <aside class="sidebar" aria-label="Navegacao principal">
             <a class="sidebar-brand" href="#top" aria-label="Ir para o topo">
                 <img src="favicon.ico" alt="">
@@ -779,9 +860,12 @@
                     <span>Comandos</span>
                 </a>
             </nav>
+            <div class="sidebar-actions">
+                <a class="signout-link" href="/auth/logout">Sair</a>
+            </div>
         </aside>
 
-    <main class="page" id="top">
+        <main class="page" id="top">
         <section class="brand-header">
             <div class="hero-info">
                 <h1 class="brand-title">Central de Ramais Rumos</h1>
@@ -805,7 +889,6 @@
                                 <th>Nome</th>
                                 <th>Setor/Local</th>
                                 <th>Ramal</th>
-                                <th>Copiar</th>
                             </tr>
                         </thead>
                         <tbody id="escritorio-body"></tbody>
@@ -825,7 +908,6 @@
                                 <th>Local</th>
                                 <th>Nome</th>
                                 <th>Ramal</th>
-                                <th>Copiar</th>
                             </tr>
                         </thead>
                         <tbody id="bases-body"></tbody>
@@ -845,7 +927,6 @@
                                 <th>Local</th>
                                 <th>Nome</th>
                                 <th>Ramal</th>
-                                <th>Copiar</th>
                             </tr>
                         </thead>
                         <tbody id="postos-body"></tbody>
@@ -865,7 +946,6 @@
                                 <th>Nome</th>
                                 <th>Setor/Local</th>
                                 <th>Ramal</th>
-                                <th>Copiar</th>
                             </tr>
                         </thead>
                         <tbody id="treslogistica-body"></tbody>
@@ -885,66 +965,11 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        const escritorioData = [
-            { nome: 'ALAMON/GILMAR', setor: 'CONTROLADORIA/DIRETORIA', ramal: '2202' },
-            { nome: 'ALESSANDRA', setor: 'COMERCIAL', ramal: '2214' },
-            { nome: 'ANA MARAN/GABRIEL BERARDO', setor: 'CONTÁBIL/JURÍDICO', ramal: '2279' },
-            { nome: 'JESSE', setor: 'RH', ramal: '2210' },
-            { nome: 'CÁSSIO', setor: 'FINANCEIRO', ramal: '2208' },
-            { nome: 'DIEGO', setor: 'COMERCIAL', ramal: '2227' },
-            { nome: 'DOMICIANO/NORBERTO', setor: 'JURÍDICO', ramal: '2203' },
-            { nome: 'ERIKA', setor: 'COMERCIAL', ramal: '2215' },
-            { nome: 'FAUSTO', setor: 'DIRETORIA', ramal: '2201' },
-            { nome: 'GABRIEL', setor: 'CONTROLADORIA', ramal: '2205' },
-            { nome: 'JOÃO GERMANO', setor: 'SUPRIMENTOS', ramal: '2206' },
-            { nome: 'JOICE', setor: 'FINANCEIRO', ramal: '2211' },
-            { nome: 'JOSIANE', setor: 'COMPRAS', ramal: '2209' },
-            { nome: 'KELI', setor: 'FINANCEIRO', ramal: '2207' },
-            { nome: 'LAURA', setor: 'SUPRIMENTOS', ramal: '2225' },
-            { nome: 'MIQUELIM', setor: 'TI', ramal: '2218' },
-            { nome: 'ALEXANDRE', setor: 'SUPRIMENTOS', ramal: '2274' },
-            { nome: 'MURILO', setor: 'TI', ramal: '2226' },
-            { nome: 'PRISCILA', setor: 'CONTÁBIL', ramal: '2212' },
-            { nome: 'SALA REUNIÃO BRONZE', setor: '', ramal: '2222' },
-            { nome: 'SALA REUNIÃO OURO', setor: '', ramal: '2220' },
-            { nome: 'SALA REUNIÃO PRATA', setor: '', ramal: '2221' },
-            { nome: 'SARA', setor: 'FINANCEIRO', ramal: '2314' },
-            { nome: 'SÉRGIO', setor: 'LOGÍSTICA COMERCIAL', ramal: '2311' }
-        ];
-
-        const basesData = [
-            { local: 'BAURU', nome: 'ARIANE', ramal: '2303' },
-            { local: 'GOIAS', nome: 'ANA CLAUDIA', ramal: '2304' },
-            { local: 'GUARULHOS', nome: 'JULIANA', ramal: '2302' },
-            { local: 'GUARULHOS', nome: 'FABIANA', ramal: '2305' },
-            { local: 'PAULINIA', nome: 'IVAN', ramal: '2301' },
-            { local: 'PAULINIA', nome: 'PAULO', ramal: '2306' },
-            { local: 'RPRETO', nome: 'BASE', ramal: '2309' },
-            { local: 'RPRETO', nome: 'GIL', ramal: '2307' },
-            { local: 'RPRETO', nome: 'RAFAEL', ramal: '2308' },
-            { local: 'UBERLÂNDIA', nome: 'SAMUEL', ramal: '2228' },
-        ];
-
-        const postosData = [
-            { local: 'PARQUE DOS LAGOS', nome: 'DAVI', ramal: '2480' }
-        ];
-
-        const tresLogisticaData = [
-            { nome: 'JESSE/MAILLY', setor: '', ramal: '3290' },
-            { nome: 'MATHEUS/THAIS', setor: '', ramal: '2277' },
-            { nome: 'OSVALDO NETO', setor: '', ramal: '3291' },
-            { nome: 'PORTARIA', setor: '', ramal: '2213' },
-            { nome: 'RONALDO', setor: 'MANUTENÇÃO', ramal: '3292' },
-            { nome: 'TALITA', setor: '', ramal: '2224' },
-            { nome: 'THAMIRES/CECÍLIA', setor: '', ramal: '2216' }
-        ];
-
-        const comandosData = [
-            { nome: 'LIGAÇÕES', descricao: 'Use *2+ RAMAL # para realizar ligações entre ramais' },
-            { nome: 'PUXAR', descricao: 'Use *8# para puxar ligação de volta para seu ramal' },
-            { nome: 'PUXAR LIGAÇÃO DE VOLTA', descricao: 'Use *2+ RAMAL # para recuperar ligação em espera' },
-            { nome: 'TRANSFERIR', descricao: 'Use *2+ RAMAL # para transferir ligações' }
-        ];
+        let escritorioData = [];
+        let basesData = [];
+        let postosData = [];
+        let tresLogisticaData = [];
+        let comandosData = [];
 
         const searchInput = document.getElementById('search');
         const escritorioBody = document.getElementById('escritorio-body');
@@ -953,6 +978,131 @@
         const tresLogisticaBody = document.getElementById('treslogistica-body');
         const comandosGrid = document.getElementById('comandos-grid');
         const toast = document.getElementById('toast');
+        const navLinks = document.querySelectorAll('.sidebar-nav a.nav-item');
+        const sections = document.querySelectorAll('main.page section[id]');
+        const loginScreen = document.getElementById('login-screen');
+        const appShell = document.getElementById('app-shell');
+        const authMessage = document.getElementById('auth-message');
+
+        function normalizeGroup(value) {
+            return String(value || '')
+                .trim()
+                .toUpperCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
+        }
+
+        function toSearchable(value) {
+            return String(value ?? '').toLowerCase();
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, character => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[character]));
+        }
+
+        function displayValue(value) {
+            if (value === null || value === undefined || value === '') {
+                return '—';
+            }
+
+            return escapeHtml(value);
+        }
+
+        function groupRamais(rows) {
+            const grouped = {
+                escritorio: [],
+                bases: [],
+                postos: [],
+                tresLogistica: [],
+                comandos: []
+            };
+
+            rows.forEach(row => {
+                const grupo = normalizeGroup(row.grupo);
+                const item = {
+                    nome: row.nome || '',
+                    setor: row.setor || '',
+                    local: row.local || row.setor || '',
+                    ramal: row.ramal === null || row.ramal === undefined ? '' : String(row.ramal),
+                    descricao: row.descricao || row.setor || ''
+                };
+
+                if (grupo === 'ESCRITORIO') {
+                    grouped.escritorio.push(item);
+                } else if (grupo === 'BASES') {
+                    grouped.bases.push(item);
+                } else if (grupo === 'AUTO POSTO') {
+                    grouped.postos.push(item);
+                } else if (grupo === '3R LOGISTICA') {
+                    grouped.tresLogistica.push(item);
+                } else if (grupo === 'COMANDOS') {
+                    grouped.comandos.push(item);
+                }
+            });
+
+            return grouped;
+        }
+
+        async function loadRamais() {
+            const response = await fetch('/ramais', { credentials: 'same-origin' });
+
+            if (response.status === 401) {
+                showLogin();
+                throw new Error('Login Microsoft 365 necessario.');
+            }
+
+            if (!response.ok) {
+                throw new Error('Não foi possível carregar os ramais.');
+            }
+
+            const grouped = groupRamais(await response.json());
+            escritorioData = grouped.escritorio;
+            basesData = grouped.bases;
+            postosData = grouped.postos;
+            tresLogisticaData = grouped.tresLogistica;
+            comandosData = grouped.comandos;
+            renderSections();
+        }
+
+        function showLogin(configured = true, message = '') {
+            appShell.classList.add('hidden');
+            loginScreen.classList.remove('hidden');
+            authMessage.textContent = message || (configured
+                ? ''
+                : 'Login Microsoft 365 ainda não configurado no servidor.');
+        }
+
+        function showApp() {
+            loginScreen.classList.add('hidden');
+            appShell.classList.remove('hidden');
+        }
+
+        async function initializeApp() {
+            try {
+                const response = await fetch('/auth/status', { credentials: 'same-origin' });
+                const status = await response.json();
+
+                if (!status.authenticated) {
+                    showLogin(status.configured, status.authError || '');
+                    return;
+                }
+
+                showApp();
+                await loadRamais();
+                observeSections();
+                searchInput.focus();
+            } catch (error) {
+                console.error(error);
+                showLogin();
+                showToast('Não foi possível verificar o login.');
+            }
+        }
 
         function getSearchQuery() {
             return searchInput.value.trim().toLowerCase();
@@ -962,32 +1112,29 @@
             if (!query) return true;
             return [item.nome, item.setor, item.ramal]
                 .filter(Boolean)
-                .some(value => value.toLowerCase().includes(query));
+                .some(value => toSearchable(value).includes(query));
         }
 
         function matchesBases(item, query) {
             if (!query) return true;
             return [item.local, item.nome, item.ramal]
                 .filter(Boolean)
-                .some(value => value.toLowerCase().includes(query));
+                .some(value => toSearchable(value).includes(query));
         }
 
         function matchesCommand(item, query) {
             if (!query) return true;
             return [item.nome, item.descricao]
                 .filter(Boolean)
-                .some(value => value.toLowerCase().includes(query));
+                .some(value => toSearchable(value).includes(query));
         }
 
         function renderOfficeRow(item) {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${item.nome || '—'}</td>
-                <td>${item.setor || '—'}</td>
-                <td>${item.ramal || '—'}</td>
-                <td>
-                    <button class="pill-button primary" type="button" onclick="copyValue('${item.ramal || ''}', 'Ramal')" ${!item.ramal ? 'disabled' : ''}>Copiar ramal</button>
-                </td>
+                <td>${displayValue(item.nome)}</td>
+                <td>${displayValue(item.setor)}</td>
+                <td>${displayValue(item.ramal)}</td>
             `;
             return row;
         }
@@ -995,12 +1142,9 @@
         function renderBasesRow(item) {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${item.local || '—'}</td>
-                <td>${item.nome || '—'}</td>
-                <td>${item.ramal || '—'}</td>
-                <td>
-                    <button class="pill-button primary" type="button" onclick="copyValue('${item.ramal || ''}', 'Ramal')" ${!item.ramal ? 'disabled' : ''}>Copiar ramal</button>
-                </td>
+                <td>${displayValue(item.local)}</td>
+                <td>${displayValue(item.nome)}</td>
+                <td>${displayValue(item.ramal)}</td>
             `;
             return row;
         }
@@ -1009,8 +1153,8 @@
             const card = document.createElement('article');
             card.className = 'command-card';
             card.innerHTML = `
-                <h3 class="command-name">${item.nome}</h3>
-                <p class="command-description">${item.descricao}</p>
+                <h3 class="command-name">${escapeHtml(item.nome)}</h3>
+                <p class="command-description">${escapeHtml(item.descricao)}</p>
                 <div class="command-tag">Ação Interna</div>
             `;
             return card;
@@ -1032,25 +1176,25 @@
             comandosGrid.innerHTML = '';
 
             if (filteredEscritorio.length === 0) {
-                escritorioBody.innerHTML = '<tr><td colspan="4">Nenhum resultado encontrado.</td></tr>';
+                escritorioBody.innerHTML = '<tr><td colspan="3">Nenhum resultado encontrado.</td></tr>';
             } else {
                 filteredEscritorio.forEach(item => escritorioBody.appendChild(renderOfficeRow(item)));
             }
 
             if (filteredBases.length === 0) {
-                basesBody.innerHTML = '<tr><td colspan="4">Nenhum resultado encontrado.</td></tr>';
+                basesBody.innerHTML = '<tr><td colspan="3">Nenhum resultado encontrado.</td></tr>';
             } else {
                 filteredBases.forEach(item => basesBody.appendChild(renderBasesRow(item)));
             }
 
             if (filteredPostos.length === 0) {
-                postosBody.innerHTML = '<tr><td colspan="4">Nenhum resultado encontrado.</td></tr>';
+                postosBody.innerHTML = '<tr><td colspan="3">Nenhum resultado encontrado.</td></tr>';
             } else {
                 filteredPostos.forEach(item => postosBody.appendChild(renderBasesRow(item)));
             }
 
             if (filteredTresLogistica.length === 0) {
-                tresLogisticaBody.innerHTML = '<tr><td colspan="4">Nenhum resultado encontrado.</td></tr>';
+                tresLogisticaBody.innerHTML = '<tr><td colspan="3">Nenhum resultado encontrado.</td></tr>';
             } else {
                 filteredTresLogistica.forEach(item => tresLogisticaBody.appendChild(renderOfficeRow(item)));
             }
@@ -1062,17 +1206,31 @@
             }
         }
 
-        function copyValue(value, label) {
-            const text = value || '';
-            if (!text) {
-                showToast(`${label} não disponível para copiar.`);
-                return;
-            }
-            navigator.clipboard.writeText(text).then(() => {
-                showToast(`${label} copiado: ${text}`);
-            }).catch(() => {
-                showToast('Falha ao copiar. Tente novamente.');
+        function updateActiveNav(selectedId) {
+            navLinks.forEach(link => {
+                const target = link.getAttribute('href')?.slice(1);
+                if (target === selectedId) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
             });
+        }
+
+        const sectionObserver = new IntersectionObserver((entries) => {
+            const visibleEntries = entries.filter(entry => entry.isIntersecting);
+            if (visibleEntries.length === 0) return;
+
+            visibleEntries.sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+            updateActiveNav(visibleEntries[0].target.id);
+        }, {
+            root: null,
+            rootMargin: '-40% 0px -40% 0px',
+            threshold: [0.1, 0.25, 0.5, 0.75]
+        });
+
+        function observeSections() {
+            sections.forEach(section => sectionObserver.observe(section));
         }
 
         let toastTimeout;
@@ -1084,9 +1242,26 @@
         }
 
         searchInput.addEventListener('input', renderSections);
-        renderSections();
 
-        window.copyValue = copyValue;
+        window.addEventListener('resize', () => {
+            observerRefresh();
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                const targetId = link.getAttribute('href')?.slice(1);
+                if (targetId) {
+                    updateActiveNav(targetId);
+                }
+            });
+        });
+
+        function observerRefresh() {
+            sectionObserver.disconnect();
+            observeSections();
+        }
+
+        initializeApp();
     </script>
 </body>
 </html>
