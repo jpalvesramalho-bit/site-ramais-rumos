@@ -175,39 +175,29 @@ app.get('/auth/callback', async (req, res) => {
             scopes: officeAuthConfig.scopes,
             redirectUri: officeAuthConfig.redirectUri
         });
-        const objectId = tokenResponse.idTokenClaims?.oid || tokenResponse.account?.localAccountId;
-        const licenseInfo = await getUserLicenseInfo(objectId);
 
-        if (!hasRequiredLicense(licenseInfo)) {
-            req.session.authError = 'Sua conta Microsoft 365 nao tem licenca liberada para acessar os ramais.';
-            delete req.session.officeUser;
-            delete req.session.authState;
-            delete req.session.authNonce;
-            res.redirect('/');
-            return;
-        }
+        const objectId = tokenResponse.idTokenClaims?.oid || tokenResponse.account?.localAccountId || '';
 
         req.session.officeUser = {
             name: tokenResponse.account?.name || tokenResponse.idTokenClaims?.name || '',
             username: tokenResponse.account?.username || tokenResponse.idTokenClaims?.preferred_username || '',
             tenantId: tokenResponse.account?.tenantId || tokenResponse.idTokenClaims?.tid || '',
-            objectId,
-            licenseCount: Array.isArray(licenseInfo.assignedLicenses) ? licenseInfo.assignedLicenses.length : 0
+            objectId
         };
+
         req.session.authError = null;
         delete req.session.authState;
         delete req.session.authNonce;
 
         res.redirect('/');
     } catch (error) {
-    console.error('ERRO COMPLETO:', error);
-
-    res.status(500).send(`
+        console.error('Erro no callback Microsoft 365:', error);
+        res.status(500).send(`
 <pre>
 ${error.stack || error.message || JSON.stringify(error, null, 2)}
 </pre>
-    `);
-}
+        `);
+    }
 });
 
 app.get('/auth/logout', (req, res) => {
