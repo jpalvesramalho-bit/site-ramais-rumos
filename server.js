@@ -200,9 +200,14 @@ app.get('/auth/callback', async (req, res) => {
 
         res.redirect('/');
     } catch (error) {
-        console.error('Erro no callback Microsoft 365:', error);
-        res.status(500).send('Nao foi possivel concluir o login Microsoft 365.');
-    }
+    console.error('ERRO COMPLETO:', error);
+
+    res.status(500).send(`
+<pre>
+${error.stack || error.message || JSON.stringify(error, null, 2)}
+</pre>
+    `);
+}
 });
 
 app.get('/auth/logout', (req, res) => {
