@@ -29,10 +29,10 @@ officeAuthConfig.msalConfig = {
     }
 };
 
-officeAuthConfig.isConfigured = ![
-    officeAuthConfig.tenantId,
-    officeAuthConfig.clientId,
+officeAuthConfig.isConfigured = Boolean(
+    officeAuthConfig.tenantId &&
+    officeAuthConfig.clientId &&
     officeAuthConfig.clientSecret
-].some((value) => value.startsWith('COLOQUE_SEU_'));
+);
 
 module.exports = officeAuthConfig;
