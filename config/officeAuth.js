@@ -36,3 +36,7 @@ officeAuthConfig.isConfigured = Boolean(
 );
 
 module.exports = officeAuthConfig;
+
+
+console.log('CONFIG TESTE:', officeAuthConfig.isConfigured);
+console.log(officeAuthConfig);
