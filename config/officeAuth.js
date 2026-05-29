@@ -6,12 +6,7 @@ const officeAuthConfig = {
     clientSecret: process.env.MS_CLIENT_SECRET || ""
     redirectUri,
     postLogoutRedirectUri: process.env.MS_POST_LOGOUT_REDIRECT_URI || new URL(redirectUri).origin,
-    scopes: ['openid', 'profile', 'email'],
-    graphScopes: ['https://graph.microsoft.com/.default'],
-    requiredSkuIds: (process.env.MS_REQUIRED_SKU_IDS || '')
-        .split(',')
-        .map((value) => value.trim().toLowerCase())
-        .filter(Boolean)
+    scopes: ['openid', 'profile', 'email']
 };
 
 officeAuthConfig.authority = `https://login.microsoftonline.com/${officeAuthConfig.tenantId}`;
@@ -36,7 +31,3 @@ officeAuthConfig.isConfigured = Boolean(
 );
 
 module.exports = officeAuthConfig;
-
-
-console.log('CONFIG TESTE:', officeAuthConfig.isConfigured);
-console.log(officeAuthConfig);

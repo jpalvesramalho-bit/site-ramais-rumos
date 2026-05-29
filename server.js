@@ -62,49 +62,6 @@ function requireAuth(req, res, next) {
     res.status(401).json({ error: 'Login Microsoft 365 necessario.' });
 }
 
-async function getGraphAppToken() {
-    const tokenResponse = await msalClient.acquireTokenByClientCredential({
-        scopes: officeAuthConfig.graphScopes
-    });
-
-    return tokenResponse.accessToken;
-}
-
-async function getUserLicenseInfo(userObjectId) {
-    const accessToken = await getGraphAppToken();
-    const url = new URL(`https://graph.microsoft.com/v1.0/users/${encodeURIComponent(userObjectId)}`);
-    url.searchParams.set('$select', 'id,accountEnabled,userPrincipalName,assignedLicenses');
-
-    const response = await fetch(url, {
-        headers: {
-            Authorization: `Bearer ${accessToken}`
-        }
-    });
-
-    if (!response.ok) {
-        const details = await response.text();
-        throw new Error(`Microsoft Graph retornou ${response.status}: ${details}`);
-    }
-
-    return response.json();
-}
-
-function hasRequiredLicense(user) {
-    if (!user.accountEnabled) {
-        return false;
-    }
-
-    const assignedLicenses = Array.isArray(user.assignedLicenses) ? user.assignedLicenses : [];
-
-    if (officeAuthConfig.requiredSkuIds.length === 0) {
-        return assignedLicenses.length > 0;
-    }
-
-    return assignedLicenses.some((license) => (
-        license.skuId && officeAuthConfig.requiredSkuIds.includes(license.skuId.toLowerCase())
-    ));
-}
-
 function getLogoutUrl() {
     const url = new URL(`${officeAuthConfig.authority}/oauth2/v2.0/logout`);
     url.searchParams.set('post_logout_redirect_uri', officeAuthConfig.postLogoutRedirectUri);
